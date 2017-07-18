@@ -7,16 +7,18 @@ A slice operator has two main uses:
 - To slice parts of a variable where the stack is stored.
 - To slice parts of the return value in a keep stack call.  
 
-The fourth usage is to slice parts of a string.  
+The third usage is to slice parts of a string.  
 
 A slice takes one of these forms:  
 
-- `[*, index]`
-- `[*, from,]`
-- `[*, from, to]`
+- `[..., index]`
+- `[..., from,]`
+- `[..., from, to]`
 
-Where `*` represents one of the two main uses (explained later) and `index`, `from`, and `to` are expressions which resolves to a number.  
+Where `...` represents one of the main uses (explained later) and `index`, `from`, and `to` are expressions which resolves to a number.  
 The numbers can be positive or negative, where negative would mean from the end of the item.  
+The form `[..., from,]` would mean from that index to the end of the stack.  
+
 Note that if the values would be out-of-range, an error is thrown.  
 
 ## Variables
