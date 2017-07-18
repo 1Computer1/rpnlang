@@ -18,8 +18,8 @@ adder = (a) => (
 is_prime = (num) => (
     $num $sqrt@ $floor@ 2 (sqnum, i) => ({
         $num $i % 0 == : $!?,
-        $i $sqnum >=   : $num 1 !=,
-        $!!            : $sqnum $i 1 + $@
+        $i $sqnum >= : $num 1 !=,
+        $!! : $sqnum $i 1 + $@
     })@
 );
 
@@ -34,7 +34,7 @@ Note that it is not a guide but rather just the syntax and operators.
 ## API
 
 RPNLang is interpreted with JavaScript.  
-You can require the module and run a file:  
+You can require the module and run code:  
 
 ```js
 const RPNProgram = require('rpnlang');
