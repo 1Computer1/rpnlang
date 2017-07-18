@@ -68,130 +68,16 @@ EXPRESSION
     ;
 
 OPERATION
-    : TOKEN
-    | CALL
-    | LITERAL
-    | LAMBDA
-    | BRANCH
-    | CASES
+    : LITERAL
+    | OPERATOR
     | GET
     | INDEX
+    | LAMBDA
+    | CALL
+    | BRANCH
+    | CASES
     | STACK
     | ITERATE
-    ;
-
-TOKEN
-    : OPERATOR
-        {{
-            $$ = {
-                type: 'operator',
-                token: $1,
-                pos: this._$
-            };
-        }}
-    ;
-
-CALL
-    : CALL_TOKEN
-        {{
-            $$ = {
-                type: 'call',
-                token: $1,
-                pos: this._$
-            };
-        }}
-    | "#" CALL_TOKEN
-        {{
-            $$ = {
-                type: 'call',
-                token: $1 + $2,
-                pos: this._$
-            };
-        }}
-    | "#" "[" CALL_TOKEN "," SLICE "]"
-        {{
-            $$ = {
-                type: 'call',
-                token: $1 + $3,
-                slice: $5,
-                pos: this._$
-            };
-        }}
-    ;
-
-CALL_TOKEN
-    : "@"
-    | "$@"
-    ;
-
-OPERATOR
-    : "+"
-    | "-"
-    | "*"
-    | "/"
-    | "%"
-    | "&"
-    | "|"
-    | "^"
-    | ">"
-    | "<"
-    | "!"
-    | "?"
-    | "~"
-    | ">="
-    | "<="
-    | "=="
-    | "!="
-    | ">>"
-    | "<<"
-    | "//"
-    | "**"
-    | "&&"
-    | "||"
-    | ">>>"
-    ;
-
-INDEX
-    : "[" "." "," SLICE "]"
-        {{
-            $$ = {
-                type: 'index',
-                slice: $4,
-                pos: this._$
-            };
-        }}
-    ;
-
-STACK
-    : "[" STACK_OPERATOR "]"
-        {{
-            $$ = {
-                type: 'stack',
-                token: $2,
-                pos: this._$
-            };
-        }}
-    | "[" STACK_OPERATOR "," SLICE "]"
-        {{
-            $$ = {
-                type: 'stack',
-                token: $2,
-                slice: $4,
-                pos: this._$
-            };
-        }}
-    ;
-
-STACK_OPERATOR
-    : ">"
-    | "<"
-    | "+"
-    | "-"
-    | "&"
-    | "@"
-    | "!"
-    | "?"
-    | "%"
     ;
 
 LITERAL
@@ -233,7 +119,82 @@ ESCAPE
                 '\\': '\\',
             }[yytext.slice(1)];
         }}
-    | HEX_ESCAPE -> String.fromCharCode(parseInt(yytext.slice(2, -1), 16))
+    | HEX_ESCAPE
+        {{
+            const num = parseInt(yytext.slice(2, -1), 16);
+            $$ = String.fromCharCode(num);
+        }}
+    ;
+
+OPERATOR
+    : OPERATOR_TOKEN
+        {{
+            $$ = {
+                type: 'operator',
+                token: $1,
+                pos: this._$
+            };
+        }}
+    ;
+
+OPERATOR_TOKEN
+    : "+"
+    | "-"
+    | "*"
+    | "/"
+    | "%"
+    | "&"
+    | "|"
+    | "^"
+    | ">"
+    | "<"
+    | "!"
+    | "?"
+    | "~"
+    | ">="
+    | "<="
+    | "=="
+    | "!="
+    | ">>"
+    | "<<"
+    | "//"
+    | "**"
+    | "&&"
+    | "||"
+    | ">>>"
+;
+
+GET
+    : "$" NAME
+        {{
+            $$ = {
+                type: 'get',
+                token: $1,
+                name: $2,
+                pos: this._$
+            };
+        }}
+    | "$" "[" NAME "," SLICE "]"
+        {{
+            $$ = {
+                type: 'get',
+                token: '$...',
+                name: $3,
+                slice: $5,
+                pos: this._$
+            };
+        }}
+    ;
+
+INDEX
+    : "[" "." "," SLICE "]"
+        {{
+            $$ = {
+                type: 'index',
+                slice: $4,
+                pos: this._$
+            };
+        }}
     ;
 
 LAMBDA
@@ -289,6 +250,39 @@ NAME_LIST
     | -> []
     ;
 
+CALL
+    : CALL_TOKEN
+        {{
+            $$ = {
+                type: 'call',
+                token: $1,
+                pos: this._$
+            };
+        }}
+    | "#" CALL_TOKEN
+        {{
+            $$ = {
+                type: 'call',
+                token: $1 + $2,
+                pos: this._$
+            };
+        }}
+    | "#" "[" CALL_TOKEN "," SLICE "]"
+        {{
+            $$ = {
+                type: 'call',
+                token: $1 + $3,
+                slice: $5,
+                pos: this._$
+            };
+        }}
+    ;
+
+CALL_TOKEN
+    : "@"
+    | "$@"
+    ;
+
 BRANCH
     : "{" EXPRESSION "," EXPRESSION "}"
         {{
@@ -339,6 +333,38 @@ CASE_ENTRY
         }}
     ;
 
+STACK
+    : "[" STACK_OPERATOR "]"
+        {{
+            $$ = {
+                type: 'stack',
+                token: $2,
+                pos: this._$
+            };
+        }}
+    | "[" STACK_OPERATOR "," SLICE "]"
+        {{
+            $$ = {
+                type: 'stack',
+                token: $2,
+                slice: $4,
+                pos: this._$
+            };
+        }}
+    ;
+
+STACK_OPERATOR
+    : ">"
+    | "<"
+    | "+"
+    | "-"
+    | "&"
+    | "@"
+    | "!"
+    | "?"
+    | "%"
+    ;
+
 ITERATE
     : "[" LAMBDA ITERATE_MODE ITERATE_TOKEN "]"
         {{
@@ -372,28 +398,6 @@ ITERATE_TOKEN
     : "&"
     | "|"
     | "<"
-    ;
-
-GET
-    : "$" NAME
-        {{
-            $$ = {
-                type: 'get',
-                token: $1,
-                name: $2,
-                pos: this._$
-            };
-        }}
-    | "$" "[" NAME "," SLICE "]"
-        {{
-            $$ = {
-                type: 'get',
-                token: '$...',
-                name: $3,
-                slice: $5,
-                pos: this._$
-            };
-        }}
     ;
 
 SLICE

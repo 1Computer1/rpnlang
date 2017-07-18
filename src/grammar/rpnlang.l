@@ -42,12 +42,12 @@ exp                     (?:[eE][+-]?[0-9]+)
 <STR>"'"                return this.popState(), '\'';
 <STR>.                  return "ANY";
 "="                     return '=';
-":"                     return ':';
 "#"                     return '#';
 "@"                     return '@';
 "$"                     return '$';
 ","                     return ',';
 "."                     return '.';
+":"                     return ':';
 ";"                     return ';';
 "["                     return '[';
 "]"                     return ']';
