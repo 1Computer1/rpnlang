@@ -1,7 +1,7 @@
 const readlineSync = require('readline-sync');
 const RPNError = require('./RPNError');
 
-class Statement {
+class Evaluation {
     constructor(program, expression) {
         Object.defineProperty(this, 'program', { value: program });
 
@@ -40,10 +40,10 @@ class Statement {
     }
 
     runInline(expression) {
-        const Constructor = this instanceof LambdaCall ? LambdaCall.bind(null, this.lambda, this.args) : Statement.bind(null, this.program);
-        const statement = new Constructor();
-        statement.expression = expression;
-        return statement.evaluate().stack;
+        const Constructor = this instanceof LambdaCall ? LambdaCall.bind(null, this.lambda, this.args) : Evaluation.bind(null, this.program);
+        const evaluation = new Constructor();
+        evaluation.expression = expression;
+        return evaluation.evaluate().stack;
     }
 
     createLambda(item) {
@@ -504,7 +504,7 @@ class Statement {
     }
 }
 
-class LambdaCall extends Statement {
+class LambdaCall extends Evaluation {
     constructor(lambda, args) {
         super(lambda.program, lambda.expression);
         this.lambda = lambda;
@@ -527,4 +527,4 @@ class Lambda {
     }
 }
 
-module.exports = Statement;
+module.exports = Evaluation;

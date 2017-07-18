@@ -1,9 +1,9 @@
 const fs = require('fs');
 const parser = require('../build/rpnlang');
 const RPNError = require('./RPNError');
-const Statement = require('./Statement');
+const Evaluation = require('./Evaluation');
 
-class Program {
+class RPNProgram {
     constructor(text, { log = console.log, debug = false, safe = false } = {}) {
         this.text = text;
         this.log = log;
@@ -11,7 +11,7 @@ class Program {
         this.safe = safe;
 
         try {
-            this.items = parser.parse(text);
+            this.statements = parser.parse(text);
         } catch (err) {
             if (this.debug) throw err;
 
@@ -109,37 +109,37 @@ class Program {
         }
     }
 
-    evaluate(item) {
+    evaluate(statement) {
         const cases = {
             assign: this.evaluateAssign,
             print: this.evaluatePrint
         };
 
-        const statement = new Statement(this, item.expression).evaluate();
-        cases[item.type].call(this, statement, item);
+        const evaluation = new Evaluation(this, statement.expression).evaluate();
+        cases[statement.type].call(this, evaluation, statement);
     }
 
-    evaluateAssign(statement, item) {
-        if (item.token === '=') {
-            this.variables.set(item.name, statement.stack[0]);
+    evaluateAssign(evaluation, statement) {
+        if (statement.token === '=') {
+            this.variables.set(statement.name, evaluation.stack[0]);
             return;
         }
 
-        if (item.token === '#=') {
-            this.variables.set(item.name, statement.stack);
+        if (statement.token === '#=') {
+            this.variables.set(statement.name, evaluation.stack);
         }
     }
 
-    evaluatePrint(statement, item) {
-        if (item.token === '>') {
-            const value = this.clean(statement.stack[0]);
+    evaluatePrint(evaluation, statement) {
+        if (statement.token === '>') {
+            const value = this.clean(evaluation.stack[0]);
             this.log(value);
             return;
         }
 
-        if (item.token === '!') {
-            const value = this.clean(statement.stack[0]);
-            throw new RPNError('', value, item.pos);
+        if (statement.token === '!') {
+            const value = this.clean(evaluation.stack[0]);
+            throw new RPNError('', value, statement.pos);
         }
     }
 
@@ -153,18 +153,18 @@ class Program {
 
     execute() {
         this.setup();
-        for (const item of this.items) {
+        for (const statement of this.statements) {
             try {
-                this.evaluate(item);
+                this.evaluate(statement);
             } catch (err) {
                 if (this.debug || err instanceof RPNError) throw err;
 
                 if (err.message === 'Maximum call stack size exceeded') {
-                    throw new RPNError('Range', 'Too much recursion', item.pos);
+                    throw new RPNError('Range', 'Too much recursion', statement.pos);
                 }
 
                 if (err.message === 'Reduce of empty array with no initial value') {
-                    throw new RPNError('Range', 'Not enough values', item.pos);
+                    throw new RPNError('Range', 'Not enough values', statement.pos);
                 }
 
                 throw err;
@@ -173,4 +173,4 @@ class Program {
     }
 }
 
-module.exports = Program;
+module.exports = RPNProgram;

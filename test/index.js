@@ -1,8 +1,8 @@
 const fs = require('fs');
-const Program = require('../src/index.js');
+const RPNProgram = require('../src/index.js');
 
 const text = fs.readFileSync('test/test.rpn', 'utf-8');
-const program = new Program(text);
+const program = new RPNProgram(text);
 
 console.log('--- SOURCE ---');
 console.log(text);
