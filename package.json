@@ -1,0 +1,23 @@
+{
+  "name": "rpnlang",
+  "version": "1.0.0",
+  "description": "An esolang based on RPN.",
+  "main": "src/index.js",
+  "author": "1Computer",
+  "license": "MIT",
+  "dependencies": {
+    "jison": "^0.4.17",
+    "minimist": "^1.2.0",
+    "readline-sync": "^1.4.7"
+  },
+  "devDependencies": {
+    "eslint": "^4.2.0"
+  },
+  "scripts": {
+    "test": "npm run build && node test/index.js",
+    "build": "jison src/grammar/rpnlang.y src/grammar/rpnlang.l -o src/build/rpnlang.js"
+  },
+  "bin": {
+    "rpn": "src/index.js"
+  }
+}
