@@ -40,7 +40,7 @@ You can require the module and run code:
 const RPNProgram = require('rpnlang');
 
 const program = new RPNProgram('> 1 1 +;');
-program.execute(); // 3
+program.execute(); // 2
 ```
 
 If you wish to add your own JavaScript objects into RPNLang, use `inject()`.  
