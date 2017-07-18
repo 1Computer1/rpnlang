@@ -527,4 +527,8 @@ class Lambda {
     }
 }
 
-module.exports = Evaluation;
+module.exports = {
+    Evaluation,
+    Lambda,
+    LambdaCall
+};

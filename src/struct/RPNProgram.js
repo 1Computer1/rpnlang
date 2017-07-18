@@ -1,7 +1,7 @@
 const fs = require('fs');
 const parser = require('../build/rpnlang');
 const RPNError = require('./RPNError');
-const Evaluation = require('./Evaluation');
+const { Evaluation, Lambda, LambdaCall } = require('./Evaluation');
 
 class RPNProgram {
     constructor(text, { log = console.log, debug = false, safe = false } = {}) {
@@ -109,6 +109,11 @@ class RPNProgram {
         }
     }
 
+    inject(key, value) {
+        this.variables.set(key, value);
+        return this;
+    }
+
     evaluate(statement) {
         const cases = {
             assign: this.evaluateAssign,
@@ -173,4 +178,8 @@ class RPNProgram {
     }
 }
 
+RPNProgram.Evaluation = Evaluation;
+RPNProgram.Lambda = Lambda;
+RPNProgram.LambdaCall = LambdaCall;
+RPNProgram.RPNError = RPNError;
 module.exports = RPNProgram;
