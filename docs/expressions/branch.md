@@ -2,7 +2,7 @@
 
 ## Branch
 
-The branch expression can be seen as an if-else statement.  
+The branch expression can be seen as an if-else expression.  
 It consumes the latest value on the stack and checks for truthiness.  
 The syntax is `{ true, false }`.  
 

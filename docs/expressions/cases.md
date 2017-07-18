@@ -2,7 +2,7 @@
 
 ## Cases
 
-The cases expression can be seen as an if-else if statement.  
+The cases expression can be seen as an if-else-if expression.  
 Unlike the branch expression, it does not check the latest value on the stack.  
 The syntax is `{ condition: expression, condition: expression, ... }`.  
 
