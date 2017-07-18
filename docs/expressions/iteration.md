@@ -16,7 +16,8 @@ Lambdas #1 and #2 needs two params, element and index.
 
 The process is:  
 
-1. Consume a value in the stack.
+1. Consume a value in the stack.  
+If the stack is empty, the iteration is stopped.
 2. Run the value and index through the iterator.
 3. Run the returned value of the iterator and index through the conditional.
 4. If the conditional returns something truthy, stop the iteration.
