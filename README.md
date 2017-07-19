@@ -17,9 +17,9 @@ adder = (a) => (
 
 is_prime = (num) => (
     $num $sqrt@ $floor@ 2 (sqnum, i) => ({
-        $num $i % 0 == : $!?,
+        $num $i % 0 == : !?,
         $i $sqnum >= : $num 1 !=,
-        $!! : $sqnum $i 1 + $@
+        !! : $sqnum $i 1 + $@
     })@
 );
 
