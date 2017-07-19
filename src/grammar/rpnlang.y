@@ -342,6 +342,14 @@ STACK
                 pos: this._$
             };
         }}
+    | "[" "?" "]"
+        {{
+            $$ = {
+                type: 'stack',
+                token: $2,
+                pos: this._$
+            };
+        }}
     | "[" STACK_OPERATOR "," SLICE "]"
         {{
             $$ = {
@@ -361,7 +369,6 @@ STACK_OPERATOR
     | "&"
     | "@"
     | "!"
-    | "?"
     | "%"
     ;
 

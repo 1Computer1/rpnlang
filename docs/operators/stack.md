@@ -3,7 +3,7 @@
 ## Stack
 
 Stack operators works on the stack.  
-Stack operators are in the form `[*, ...]` where `*` is one of the operators below.  
+Stack operators are in the form `[..., ...]` where the first `...` is one of the operators below, and the second is similar to slice.  
 It is syntactically similar to the slice operator, but does not necessarily slice.  
 
 ## Length
@@ -12,7 +12,8 @@ Operator: `[?]`
 Gets the length of the stack.  
 Does not consume any values.  
 
-This operator is a special case since the index portion of the syntax is ignored and not evaluated.  
+This operator is a special case since only the form `[?]` can be used.  
+Using a slice-like syntax would result in an error.  
 
 ```
 // Prints 5
@@ -46,6 +47,11 @@ Prints value(s) in the stack.
 Does not consume any values.  
 
 Works the same as the print operator, but throws an error instead.  
+
+```
+// Error 1:11: [Wow]
+< 'Wow' [!];
+```
 
 ## Input
 
