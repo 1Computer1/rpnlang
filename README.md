@@ -43,6 +43,22 @@ const program = new RPNProgram('> 1 1 +;');
 program.execute(); // 2
 ```
 
+You can also use `RPNProgram.makeModule` in order to make a module compatible with RPNLang.  
+Note that this is a very simple method and will not do any sort of error checking.  
+
+```js
+const RPNProgram = require('rpnlang');
+module.exports = RPNProgram.makeModule({
+    num: 5,
+    add: (a, b) => a + b
+});
+```
+
+```
+math << 'math.js';
+> math::num 10 math::add@; // 15
+```
+
 #### `RPNProgram(source[, options])`
 
 - `source` - The source code.
