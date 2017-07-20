@@ -112,11 +112,6 @@ class RPNProgram {
         }
     }
 
-    inject(key, value) {
-        this.variables.set(key, value);
-        return this;
-    }
-
     evaluate(statement) {
         const cases = {
             assign: this.evaluateAssign,

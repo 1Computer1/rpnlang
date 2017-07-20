@@ -43,28 +43,6 @@ const program = new RPNProgram('> 1 1 +;');
 program.execute(); // 2
 ```
 
-If you wish to add your own JavaScript objects into RPNLang, use `inject()`.  
-You can also interact with RPNLang's objects using `RPNProgram.Evaluation`, `RPNProgram.Lambda`, `RPNProgram.LambdaCall`, or `RPNProgram.RPNError`.  
-
-Note that you will have to do many of the safety checks yourself in order to not cause errors from JavaScript.  
-Variables can be accessed using `program.variables`.  
-
-```js
-const RPNProgram = require('rpnlang');
-
-new RPNProgram('> $custom;')
-    .inject('custom', 50)
-    .execute(); // 50
-
-new RPNProgram('> (n) => ($n 1 +) $call_with_5@;')
-    .inject('call_with_5', lambda => {
-        return lambda.call(new Map([
-            [lambda.params[0], 5]
-        ]));
-    })
-    .execute(); // 6
-```
-
 #### `RPNProgram(source[, options])`
 
 - `source` - The source code.
