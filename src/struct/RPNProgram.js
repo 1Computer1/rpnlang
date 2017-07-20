@@ -133,7 +133,7 @@ class RPNProgram {
             return;
         }
 
-        if (statement.token === '#=') {
+        if (statement.token === '#') {
             this.variables.set(statement.name, evaluation.stack);
             return;
         }

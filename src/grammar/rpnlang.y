@@ -47,7 +47,7 @@ ASSIGN_STATEMENT
 
 ASSIGN_TOKEN
     : "="
-    | "#="
+    | "#"
     | ">>"
     | "#>"
     ;

@@ -29,7 +29,7 @@ x = 5;
 
 ## Stack Assign
 
-You can assign the entire stack to variable with the `#=` statement.  
+You can assign the entire stack to variable with the `#` statement.  
 When stack variables are retrieved, the entire stack is pushed in.  
 
 ```

@@ -20,7 +20,6 @@ exp                     (?:[eE][+-]?[0-9]+)
 {alpha}\w*              return 'NAME';
 ">>>"                   return '>>>';
 "..."                   return '...';
-"#="                    return '#=';
 "#>"                    return '#>';
 "=>"                    return this.begin('LMB'), '=>';
 "<="                    return '<=';
