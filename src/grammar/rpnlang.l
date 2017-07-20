@@ -21,6 +21,7 @@ exp                     (?:[eE][+-]?[0-9]+)
 ">>>"                   return '>>>';
 "..."                   return '...';
 "#="                    return '#=';
+"#>"                    return '#>';
 "=>"                    return this.begin('LMB'), '=>';
 "<="                    return '<=';
 ">="                    return '>=';
@@ -36,6 +37,7 @@ exp                     (?:[eE][+-]?[0-9]+)
 "!?"                    return '!?';
 "!!"                    return '!!';
 "!%"                    return '!%';
+"::"                    return '::';
 "'"                     return this.begin('STR'), '\'';
 <STR>\\[0bfnrtv'\\]     return "CHAR_ESCAPE";
 <STR>\\"{"{hex}{1,6}"}" return "HEX_ESCAPE";

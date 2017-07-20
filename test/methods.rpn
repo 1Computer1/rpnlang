@@ -1,0 +1,20 @@
+random_numbers >> (amount) => ([(i) => (100 $random@ $floor@ 1 +) @& (e, i) => ($i $amount ==)]);
+
+is_prime >> (num) => (
+    $num $sqrt@ $floor@ 2 (sqnum, i) => ({
+        $num $i % 0 == : !?,
+        $i $sqnum >= : $num 1 !=,
+        !! : $sqnum $i 1 + $@
+    })@
+);
+
+quicksort >> (...nums) => ({
+    $nums [?] 0 == : [],
+    !! : $[nums, 0] (first) => (
+        (#@ $[nums, 1,] [(e, i) => ($e $first >) #|] ::quicksort#@)
+        $first
+        (#@ $[nums, 1,] [(e, i) => ($e $first <=) #|] ::quicksort#@)
+    )#@
+});
+
+test #> 3 2 1;

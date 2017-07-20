@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const parser = require('../build/rpnlang');
 const RPNError = require('./RPNError');
 const { Evaluation, Lambda, LambdaCall } = require('./Evaluation');
@@ -33,6 +34,8 @@ class RPNProgram {
         }
 
         this.variables = new Map();
+        this.exports = new Map();
+        this.imports = new Map();
     }
 
     setup() {
@@ -132,6 +135,49 @@ class RPNProgram {
 
         if (statement.token === '#=') {
             this.variables.set(statement.name, evaluation.stack);
+            return;
+        }
+
+        if (statement.token === '<<') {
+            if (this.imports.has(statement.name)) {
+                throw new RPNError('Module', 'Cannot reassign an imported module', statement.pos);
+            }
+
+            const filepath = path.resolve(evaluation.stack[0]);
+            let text;
+
+            try {
+                text = fs.readFileSync(filepath, 'utf-8');
+            } catch (err) {
+                throw new RPNError('Module', `Could not import ${filepath}`, statement.pos);
+            }
+
+            const program = new RPNProgram(text, {
+                log: this.log,
+                debug: this.debug,
+                safe: this.safe
+            });
+
+            program.execute();
+            this.imports.set(statement.name, program.exports);
+            return;
+        }
+
+        if (statement.token === '>>') {
+            if (this.exports.has(statement.name)) {
+                throw new RPNError('Module', 'Cannot reassign an exported value', statement.pos);
+            }
+
+            this.exports.set(statement.name, evaluation.stack[0]);
+            return;
+        }
+
+        if (statement.token === '#>') {
+            if (this.exports.has(statement.name)) {
+                throw new RPNError('Module', 'Cannot reassign an exported value', statement.pos);
+            }
+
+            this.exports.set(statement.name, evaluation.stack);
         }
     }
 

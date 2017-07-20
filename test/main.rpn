@@ -1,0 +1,14 @@
+methods << './test/methods.rpn';
+
+numbers #= 'How many numbers? ' [<, 0] $int@ 1 || 1 - methods::random_numbers#@;
+primes #= $numbers [(e, i) => ($e methods::is_prime@) #|];
+sorted #= $primes methods::quicksort#@;
+
+> 'Random numbers:';
+< $numbers [>];
+
+> 'Prime numbers:';
+< $primes [?] { [], $UNDEFINED } [>];
+
+> 'Sorted primes:';
+< $sorted [?] { [], $UNDEFINED } [>];

@@ -33,11 +33,23 @@ ASSIGN_STATEMENT
                 pos: this._$
             };
         }}
+    | NAME "<<" STRING
+        {{
+            $$ = {
+                type: 'assign',
+                token: $2,
+                name: $1,
+                expression: [$3],
+                pos: this._$
+            };
+        }}
     ;
 
 ASSIGN_TOKEN
     : "="
     | "#="
+    | ">>"
+    | "#>"
     ;
 
 PRINT_STATEMENT
@@ -181,6 +193,48 @@ GET
                 token: '$...',
                 name: $3,
                 slice: $5,
+                pos: this._$
+            };
+        }}
+    | "::" NAME
+        {{
+            $$ = {
+                type: 'get',
+                token: '$',
+                module: true,
+                name: $2,
+                pos: this._$
+            };
+        }}
+    | "[" "::" NAME "," SLICE "]"
+        {{
+            $$ = {
+                type: 'get',
+                token: '$...',
+                module: true,
+                name: $3,
+                slice: $5,
+                pos: this._$
+            };
+        }}
+    | NAME "::" NAME
+        {{
+            $$ = {
+                type: 'get',
+                token: '$',
+                module: $1,
+                name: $3,
+                pos: this._$
+            };
+        }}
+    | NAME "[" "::" NAME "," SLICE "]"
+        {{
+            $$ = {
+                type: 'get',
+                token: '$...',
+                module: $1,
+                name: $4,
+                slice: $6,
                 pos: this._$
             };
         }}

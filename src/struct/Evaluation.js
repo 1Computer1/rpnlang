@@ -225,6 +225,38 @@ class Evaluation {
     }
 
     evaluateGet(item) {
+        if (item.module) {
+            if (item.module !== true && !this.program.imports.has(item.module)) {
+                throw new RPNError('Name', `Module ${item.module} is not imported`, item.pos);
+            }
+
+            const source = item.module === true ? this.program.exports : this.program.imports.get(item.module);
+
+            if (!source.has(item.name)) {
+                throw new RPNError('Name', `${item.name} is not defined`, item.pos);
+            }
+
+            const val = source.get(item.name);
+
+            if (item.token === '$...') {
+                if (!Array.isArray(val)) {
+                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
+                } else {
+                    const slice = this.createSlice(item, val);
+                    this.stack.unshift(...slice);
+                    return;
+                }
+            }
+
+            if (Array.isArray(val)) {
+                this.stack.unshift(...val);
+            } else {
+                this.stack.unshift(val);
+            }
+
+            return;
+        }
+
         if (this.program.variables.has(item.name)) {
             const val = this.program.variables.get(item.name);
 

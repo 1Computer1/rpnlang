@@ -16,6 +16,7 @@ These are not meant to be read in order.
 
 - [Printing](./values/printing.md)
 - [Variables](./values/variables.md)
+- [Modules](./values/modules.md)
 
 ## Operators
 
