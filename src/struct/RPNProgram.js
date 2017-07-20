@@ -3,6 +3,7 @@ const path = require('path');
 const parser = require('../build/rpnlang');
 const RPNError = require('./RPNError');
 const { Evaluation, Lambda, LambdaCall } = require('./Evaluation');
+const moduleSymbol = Symbol('rpnModule');
 
 class RPNProgram {
     constructor(text, { log = console.log, debug = false, safe = false } = {}) {
@@ -143,6 +144,19 @@ class RPNProgram {
             }
 
             let filepath = path.resolve(evaluation.stack[0]);
+
+            if (path.extname(filepath) === '.js') {
+                const js = require(filepath);
+
+                if (typeof js !== 'object' && !js[moduleSymbol]) {
+                    delete require.cache[require.resolve(filepath)];
+                    throw new RPNError('Module', `Could not import ${filepath}`, statement.pos);
+                }
+
+                this.imports.set(statement.name, js.exports);
+                return;
+            }
+
             if (!path.extname(filepath)) {
                 filepath += '.rpn';
             }
@@ -225,8 +239,17 @@ class RPNProgram {
             }
         }
     }
+
+    static makeModule(obj) {
+        return {
+            _exports: obj,
+            exports: new Map(Object.entries(obj)),
+            [moduleSymbol]: true
+        };
+    }
 }
 
+RPNProgram.RPNProgram = RPNProgram;
 RPNProgram.Evaluation = Evaluation;
 RPNProgram.Lambda = Lambda;
 RPNProgram.LambdaCall = LambdaCall;

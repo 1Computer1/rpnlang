@@ -1,4 +1,5 @@
 methods << './test/methods.rpn';
+test << './test/test.js';
 
 numbers # 'How many numbers? ' [<, 0] $int@ 1 || 1 - methods::random_numbers#@;
 primes # $numbers [(e, i) => ($e methods::is_prime@) #|];
@@ -8,7 +9,7 @@ sorted # $primes methods::quicksort#@;
 < $numbers [>];
 
 > 'Prime numbers:';
-< $primes [?] { [], $UNDEFINED } [>];
+> $primes test::joinString@ 'None' ||;
 
 > 'Sorted primes:';
-< $sorted [?] { [], $UNDEFINED } [>];
+> $sorted test::joinString@ 'None' ||;
