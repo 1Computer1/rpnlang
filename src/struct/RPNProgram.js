@@ -134,11 +134,19 @@ class RPNProgram {
         }
 
         if (statement.token === '<<') {
+            if (this.safe) {
+                throw new RPNError('Module', `Could not import ${filepath}`, statement.pos);
+            }
+
             if (this.imports.has(statement.name)) {
                 throw new RPNError('Module', 'Cannot reassign an imported module', statement.pos);
             }
 
-            const filepath = path.resolve(evaluation.stack[0]);
+            let filepath = path.resolve(evaluation.stack[0]);
+            if (!path.extname(filepath)) {
+                filepath += '.rpn';
+            }
+
             let text;
 
             try {
