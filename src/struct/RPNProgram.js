@@ -135,6 +135,8 @@ class RPNProgram {
         }
 
         if (statement.token === '<<') {
+            let filepath = path.resolve(evaluation.stack[0]);
+
             if (this.safe) {
                 throw new RPNError('Module', `Could not import ${filepath}`, statement.pos);
             }
@@ -142,8 +144,6 @@ class RPNProgram {
             if (this.imports.has(statement.name)) {
                 throw new RPNError('Module', 'Cannot reassign an imported module', statement.pos);
             }
-
-            let filepath = path.resolve(evaluation.stack[0]);
 
             if (path.extname(filepath) === '.js') {
                 const js = require(filepath);
