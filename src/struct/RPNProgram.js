@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const parser = require('../build/rpnlang');
 const RPNError = require('./RPNError');
-const { Evaluation, Lambda, LambdaCall } = require('./Evaluation');
+const Evaluation = require('./Evaluation');
 const moduleSymbol = Symbol('rpnModule');
 
 class RPNProgram {
