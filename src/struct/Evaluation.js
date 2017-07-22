@@ -67,6 +67,10 @@ class Evaluation {
     }
 
     createSlice(item, toSlice, dry) {
+        if (!this.stack.length) {
+            throw new RPNError('Range', 'Value out of range for operation', item.pos);
+        }
+
         let from = Number(this.runInline(item.slice.from || item.slice.index)[0]);
         if (isNaN(from)) {
             throw new RPNError('Type', 'Value not a number', item.pos);
@@ -445,6 +449,16 @@ class Evaluation {
             return;
         }
 
+        if (item.token === '<' && !item.slice) {
+            if (this.program.safe) {
+                this.stack.unshift('');
+                return;
+            }
+
+            this.stack.unshift(readlineSync.question());
+            return;
+        }
+
         const [from, to] = item.slice
             ? this.createSlice(item, this.stack, true)
             : this.createSlice({
@@ -472,7 +486,7 @@ class Evaluation {
                 this.program.log(values);
             },
             '<': () => {
-                const text = item.slice ? this.stack.splice(from, to - from).join(' ') : '';
+                const text = this.stack.splice(from, to - from).join(' ');
 
                 if (this.program.safe) {
                     this.stack.unshift('');
