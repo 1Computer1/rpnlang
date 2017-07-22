@@ -351,7 +351,26 @@ class Evaluation {
             const args = this.stack.splice(0, lambda.length || Infinity);
             const res = lambda(...args.reverse());
 
-            this.stack.unshift(res);
+            if (!this.program.constructor.isValue(res)) {
+                throw new RPNError('Type', 'Invalid return value', item.pos);
+            }
+
+            if (item.slice) {
+                if (!Array.isArray(res)) {
+                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
+                } else {
+                    const slice = this.createSlice(item, res);
+                    this.stack.unshift(...slice);
+                    return;
+                }
+            }
+
+            if (Array.isArray(res)) {
+                this.stack.unshift(...res);
+            } else {
+                this.stack.unshift(res);
+            }
+
             return;
         }
 

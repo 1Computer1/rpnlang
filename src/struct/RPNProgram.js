@@ -241,17 +241,39 @@ class RPNProgram {
     }
 
     static makeModule(obj) {
+        if (typeof obj !== 'object') throw new TypeError('Must be an object');
+        if (Object.values(obj).some(a => !this.isValue(a))) throw new TypeError('Invalid export (not primitive or array containing only primitives)');
+
         return {
             _exports: obj,
             exports: new Map(Object.entries(obj)),
             [moduleSymbol]: true
         };
     }
+
+    static callLambda(lambda, args) {
+        if (lambda.params.length !== args.length) throw new RangeError('Invalid amount of arguments for lambda');
+        if (args.some(a => !this.isValue(a))) throw new TypeError('Invalid value passed in (not primitive or array containing only primitives)');
+        const argsMap = new Map();
+        for (const [i, param] of lambda.params.entries()) {
+            argsMap.set(param, args[i]);
+        }
+
+        return lambda.call(argsMap, true);
+    }
+
+    static isValue(value) {
+        if (Array.isArray(value)) {
+            for (const item of value) {
+                if (Array.isArray(item)) return false;
+                if (!this.isValue(item)) return false;
+            }
+
+            return true;
+        }
+
+        return ['string', 'number', 'boolean', 'undefined', 'function'].includes(typeof value);
+    }
 }
 
-RPNProgram.RPNProgram = RPNProgram;
-RPNProgram.Evaluation = Evaluation;
-RPNProgram.Lambda = Lambda;
-RPNProgram.LambdaCall = LambdaCall;
-RPNProgram.RPNError = RPNError;
 module.exports = RPNProgram;

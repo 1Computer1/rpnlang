@@ -6,7 +6,7 @@ primes # $numbers [(e, i) => ($e methods::is_prime@) #|];
 sorted # $primes methods::quicksort#@;
 
 > 'Random numbers:';
-< $numbers [>];
+> $numbers test::joinString@ 'None' ||;
 
 > 'Prime numbers:';
 > $primes test::joinString@ 'None' ||;

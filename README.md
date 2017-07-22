@@ -44,13 +44,17 @@ program.execute(); // 2
 ```
 
 You can also use `RPNProgram.makeModule` in order to make a module compatible with RPNLang.  
-Note that this is a very simple method and will not do any sort of error checking.  
+To call a lambda from RPNLang, use `RPNProgram.callLambda`.  
 
 ```js
 const RPNProgram = require('rpnlang');
 module.exports = RPNProgram.makeModule({
     num: 5,
-    add: (a, b) => a + b
+    add: (a, b) => a + b,
+    map: (...args) => {
+        const mapper = args[0];
+        return args.slice(1).map(e => RPNProgram.callLambda(mapper, [e])[0]);
+    }
 });
 ```
 
