@@ -48,3 +48,13 @@ The logical operators are:
 
 There is short-circuting for `&&` and `||`.  
 Note that `!` and `?` are both unary operators.  
+
+## Lambda
+
+All of the above operators can be turned into a lambda by wrapping them with `()`.  
+The following two are equivalent.  
+
+```
+> 1 1 +;
+> 1 1 (+)@;
+```

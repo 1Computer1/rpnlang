@@ -214,6 +214,11 @@ class Evaluation {
             '>>>': (a, b) => a >>> b
         }[item.token];
 
+        if (item.dry) {
+            this.stack.unshift(func);
+            return;
+        }
+
         if (this.stack.length < func.length) {
             throw new RPNError('Range', 'Invalid amount of arguments', item.pos);
         }

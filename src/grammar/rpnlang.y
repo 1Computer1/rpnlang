@@ -147,6 +147,15 @@ OPERATOR
                 pos: this._$
             };
         }}
+    | "(" OPERATOR_TOKEN ")"
+        {{
+            $$ = {
+                type: 'operator',
+                token: $2,
+                dry: true,
+                pos: this._$
+            };
+        }}
     ;
 
 OPERATOR_TOKEN
