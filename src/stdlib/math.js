@@ -4,9 +4,7 @@ const namespace = {
     G: 6.67408e-11,
     C: 299792458,
     GR: (1 + Math.sqrt(5)) / 2,
-    TAU: Math.PI * 2,
-    sum: (...args) => args.reduce((t, a) => t + a),
-    product: (...args) => args.reduce((t, a) => t * a)
+    TAU: Math.PI * 2
 };
 
 Object.assign(namespace, Object.getOwnPropertyNames(Math).reduce((o, k) => {

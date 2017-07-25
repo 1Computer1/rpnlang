@@ -71,7 +71,9 @@ class RPNProgram {
                 if (type === 'function') return 'native';
                 if (type === 'object') return 'lambda';
                 return type;
-            }
+            },
+            sum: (...args) => args.reduce((t, a) => t + a),
+            product: (...args) => args.reduce((t, a) => t * a)
         };
 
         for (const [key, value] of Object.entries(namespace)) {

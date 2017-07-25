@@ -46,3 +46,12 @@ Gets the length of a string.
 - `type = (value) => (string)`  
 Gets the type of the value.  
 Returns one of `boolean`, `number`, `string`, `lambda`, `native`, or `undefined`.  
+
+- `sum = (...stack) => (number | string)`  
+Sums up the stack.  
+Can return `NaN`.  
+
+- `product = (...stack) => (number)`  
+Multiplies the values of the stack together.  
+Can return `NaN`.  
+

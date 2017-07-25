@@ -26,11 +26,3 @@ The golden ratio.
 
 - `TAU`  
 Equivalent to 2 times PI.  
-
-- `sum = (...stack) => (number | string)`  
-Sums up the stack.  
-Can return `NaN`.  
-
-- `product = (...stack) => (number)`  
-Multiplies the values of the stack together.  
-Can return `NaN`.  
