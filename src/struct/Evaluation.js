@@ -67,10 +67,6 @@ class Evaluation {
     }
 
     createSlice(item, toSlice, dry) {
-        if (!this.stack.length) {
-            throw new RPNError('Range', 'Value out of range for operation', item.pos);
-        }
-
         let from = Number(this.runInline(item.slice.from || item.slice.index)[0]);
         if (isNaN(from)) {
             throw new RPNError('Type', 'Value not a number', item.pos);
@@ -234,6 +230,9 @@ class Evaluation {
     }
 
     evaluateGet(item) {
+        let val;
+        let found;
+
         if (item.module) {
             if (item.module !== true && !this.program.imports.has(item.module)) {
                 throw new RPNError('Name', `Module ${item.module} is not imported`, item.pos);
@@ -245,79 +244,43 @@ class Evaluation {
                 throw new RPNError('Name', `${item.name} is not defined`, item.pos);
             }
 
-            const val = source.get(item.name);
-
-            if (item.token === '$...') {
-                if (!Array.isArray(val)) {
-                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
-                } else {
-                    const slice = this.createSlice(item, val);
-                    this.stack.unshift(...slice);
-                    return;
-                }
-            }
-
-            if (Array.isArray(val)) {
-                this.stack.unshift(...val);
-            } else {
-                this.stack.unshift(val);
-            }
-
-            return;
-        }
-
+            val = source.get(item.name);
+            found = true;
+        } else
         if (this.program.variables.has(item.name)) {
-            const val = this.program.variables.get(item.name);
-
-            if (item.token === '$...') {
-                if (!Array.isArray(val)) {
-                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
-                } else {
-                    const slice = this.createSlice(item, val);
-                    this.stack.unshift(...slice);
-                    return;
-                }
-            }
-
-            if (Array.isArray(val)) {
-                this.stack.unshift(...val);
-            } else {
-                this.stack.unshift(val);
-            }
-
-            return;
-        }
-
+            val = this.program.variables.get(item.name);
+            found = true;
+        } else
         if (this instanceof LambdaCall) {
-            let val;
-
             if (this.lambda.params.includes(item.name)) {
                 val = this.args.get(item.name);
+                found = true;
             } else
             if (this.lambda.closure.has(item.name)) {
                 val = this.lambda.closure.get(item.name);
+                found = true;
             }
-
-            if (item.token === '$...') {
-                if (!Array.isArray(val)) {
-                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
-                } else {
-                    const slice = this.createSlice(item, val);
-                    this.stack.unshift(...slice);
-                    return;
-                }
-            }
-
-            if (Array.isArray(val)) {
-                this.stack.unshift(...val);
-            } else {
-                this.stack.unshift(val);
-            }
-
-            return;
         }
 
-        throw new RPNError('Name', `${item.name} is not defined`, item.pos);
+        if (!found) {
+            throw new RPNError('Name', `${item.name} is not defined`, item.pos);
+        }
+
+        if (item.token === '$...') {
+            if (!Array.isArray(val)) {
+                throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
+            } else {
+                const slice = this.createSlice(item, val);
+                this.stack.unshift(...slice);
+                return;
+            }
+        }
+
+        if (Array.isArray(val)) {
+            this.stack.unshift(...val);
+        } else {
+            this.stack.unshift(val);
+        }
     }
 
     evaluateLambda(item) {
@@ -332,6 +295,7 @@ class Evaluation {
     evaluateCall(item) {
         const keep = item.token.includes('#');
         let lambda;
+        let res;
 
         if (item.token.includes('$@')) {
             if (!(this instanceof LambdaCall)) {
@@ -353,47 +317,27 @@ class Evaluation {
             }
 
             const args = this.stack.splice(0, lambda.length || Infinity);
-            const res = lambda(...args.reverse());
+            res = lambda(...args.reverse());
 
             if (!this.program.constructor.isValue(res)) {
                 throw new RPNError('Type', 'Invalid return value', item.pos);
             }
-
-            if (item.slice) {
-                if (!Array.isArray(res)) {
-                    throw new RPNError('Range', 'Cannot spread non-rest value', item.pos);
-                } else {
-                    const slice = this.createSlice(item, res);
-                    this.stack.unshift(...slice);
-                    return;
-                }
-            }
-
-            if (Array.isArray(res)) {
-                this.stack.unshift(...res);
-            } else {
-                this.stack.unshift(res);
-            }
-
-            return;
-        }
-
-        if (lambda.params.rest ? false : this.stack.length < lambda.params.length) {
-            throw new RPNError('Range', 'Invalid amount of arguments', item.pos);
-        }
-
-        let res;
-
-        if (!lambda.params.rest) {
-            const args = new Map();
-            for (const [i, arg] of this.stack.splice(0, lambda.params.length).reverse().entries()) {
-                args.set(lambda.params[i], arg);
-            }
-
-            res = lambda.call(args, keep);
         } else {
-            const args = new Map([[lambda.params[0], this.stack.splice(0, Infinity).reverse()]]);
-            res = lambda.call(args, keep);
+            if (lambda.params.rest ? false : this.stack.length < lambda.params.length) {
+                throw new RPNError('Range', 'Invalid amount of arguments', item.pos);
+            }
+
+            if (!lambda.params.rest) {
+                const args = new Map();
+                for (const [i, arg] of this.stack.splice(0, lambda.params.length).reverse().entries()) {
+                    args.set(lambda.params[i], arg);
+                }
+
+                res = lambda.call(args, keep);
+            } else {
+                const args = new Map([[lambda.params[0], this.stack.splice(0, Infinity).reverse()]]);
+                res = lambda.call(args, keep);
+            }
         }
 
         if (item.slice) {
@@ -457,6 +401,10 @@ class Evaluation {
 
             this.stack.unshift(readlineSync.question());
             return;
+        }
+
+        if (!this.stack.length) {
+            throw new RPNError('Range', 'Value out of range for operation', item.pos);
         }
 
         const [from, to] = item.slice
