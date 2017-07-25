@@ -55,10 +55,6 @@ class RPNProgram {
         };
 
         const namespace = {
-            G: 6.67408e-11,
-            C: 299792458,
-            GR: (1 + Math.sqrt(5)) / 2,
-            TAU: Math.PI * 2,
             NAN: NaN,
             TRUE: true,
             FALSE: false,
@@ -69,44 +65,14 @@ class RPNProgram {
             base: (a, b) => nan(a, b) || isNaN(b) ? NaN : parseInt(a, Math.floor(Number(b))),
             nan: a => isNaN(a),
             nanbase: (a, b) => nan(a, b),
-            sum: (...args) => args.reduce((t, a) => t + a),
-            product: (...args) => args.reduce((t, a) => t * a),
-            charcode: (a, b) => String(a).charCodeAt(Number(b)),
-            fromcode: a => String.fromCharCode(a),
-            random: a => Math.random() * a,
             length: a => a.length,
             type: a => {
                 const type = typeof a;
                 if (type === 'function') return 'native';
                 if (type === 'object') return 'lambda';
                 return type;
-            },
-            read: file => {
-                if (this.safe) return undefined;
-
-                try {
-                    return fs.readFileSync(file, 'utf-8');
-                } catch (err) {
-                    return undefined;
-                }
-            },
-            write: (file, data) => {
-                if (this.safe) return false;
-
-                try {
-                    fs.writeFileSync(file, data, 'utf-8');
-                    return true;
-                } catch (err) {
-                    return false;
-                }
             }
         };
-
-        Object.assign(namespace, Object.getOwnPropertyNames(Math).reduce((o, k) => {
-            if (k === 'random') return o;
-            o[k] = Math[k];
-            return o;
-        }, {}));
 
         for (const [key, value] of Object.entries(namespace)) {
             this.variables.set(key, value);
@@ -135,6 +101,18 @@ class RPNProgram {
         }
 
         if (statement.token === '<<') {
+            if (/^stdlib\[(\w+)\]$/.test(evaluation.stack[0])) {
+                const [, libName] = evaluation.stack[0].match(/^stdlib\[(\w+)\]$/);
+
+                try {
+                    const lib = require(`../stdlib/${libName}.js`);
+                    this.imports.set(statement.name, lib(this).exports);
+                    return;
+                } catch (err) {
+                    throw new RPNError('Module', `Could not import ${filepath}`, statement.pos);
+                }
+            }
+
             let filepath = path.resolve(evaluation.stack[0]);
 
             if (this.safe) {

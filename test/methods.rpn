@@ -1,7 +1,9 @@
-random_numbers >> (amount) => ([(i) => (100 $random@ $floor@ 1 +) @& (e, i) => ($i $amount ==)]);
+math << 'stdlib[math]';
+
+random_numbers >> (amount) => ([(i) => (100 math::random@ math::floor@ 1 +) @& (e, i) => ($i $amount ==)]);
 
 is_prime >> (num) => (
-    $num $sqrt@ $floor@ 2 (sqnum, i) => ({
+    $num math::sqrt@ math::floor@ 2 (sqnum, i) => ({
         $num $i % 0 == : !?,
         $i $sqnum >= : $num 1 !=,
         !! : $sqnum $i 1 + $@

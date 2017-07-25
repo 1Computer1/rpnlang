@@ -32,8 +32,9 @@ These are not meant to be read in order.
 - [Grouping Expression](./expressions/grouping.md)
 - [Iteration Expression](./expressions/iteration.md)
 
-## Built-in Objects
+## Built-in
 
-- [Constants](./builtin/constants.md)
-- [Lambdas](./builtin/lambdas.md)
+- [Global](./builtin/global.md)
 - [Math](./builtin/math.md)
+- [String](./builtin/string.md)
+- [File IO](./builtin/file-io.md)

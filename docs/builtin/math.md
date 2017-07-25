@@ -2,8 +2,35 @@
 
 ## Math
 
-RPNLang borrows constants and methods from JavaScript's Math object.  
-With the exception of random, they are the same.  
-Simply prefix `$` to access them.  
+A standard library for mathematical operations and constants.  
+The library `math` can be imported like so:  
 
-See [Math on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math).  
+```
+math << 'stdlib[math]';
+```
+
+The `math` library borrows properties and methods from JavaScript's Math object.  
+Only non-Math members are shown here.  
+See [MDN on Math](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math).  
+
+## Members
+
+- `G`  
+The graviational constant.  
+
+- `C`  
+The speed of light in km/s.  
+
+- `GR`  
+The golden ratio.  
+
+- `TAU`  
+Equivalent to 2 times PI.  
+
+- `sum = (...stack) => (number | string)`  
+Sums up the stack.  
+Can return `NaN`.  
+
+- `product = (...stack) => (number)`  
+Multiplies the values of the stack together.  
+Can return `NaN`.  
