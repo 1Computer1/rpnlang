@@ -207,7 +207,6 @@ class Evaluation {
             '!=': (a, b) => a !== b,
             '>>': (a, b) => a >> b,
             '<<': (a, b) => a << b,
-            '//': (a, b) => Math.floor(a / b),
             '**': (a, b) => a ** b,
             '&&': (a, b) => a && b,
             '||': (a, b) => a || b,

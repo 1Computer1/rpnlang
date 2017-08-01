@@ -10,7 +10,6 @@ The arithmethic operators are:
 - `/` - Division
 - `%` - Modulus
 - `**` - Exponentation
-- `//` - Integer division
 
 ## Bitwise
 
